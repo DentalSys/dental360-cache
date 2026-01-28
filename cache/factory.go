@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Dentalsys/dental360-cache/providers/redis"
+	"github.com/DentalSys/dental360-cache/providers/redis"
 )
 
 func New(cfg Config) (Cache, error) {
