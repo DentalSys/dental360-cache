@@ -1,12 +1,8 @@
-name: Manual Release
+name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version (ex: v0.1.0)"
-        required: true
-        type: string
+  push:
+    branches: [main]
 
 permissions:
   contents: write
@@ -19,7 +15,23 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate next tag
+        id: tag
+        run: |
+          LAST_TAG=$(git tag --sort=-v:refname | head -n 1)
+          if [ -z "$LAST_TAG" ]; then
+            NEXT_TAG="v0.1.0"
+          else
+            NEXT_TAG=$(echo "$LAST_TAG" | awk -F. '{printf "v%d.%d.%d", $1+0, $2, $3+1}')
+          fi
+          echo "tag=$NEXT_TAG" >> $GITHUB_OUTPUT
+
       - name: Create tag
         run: |
-          git tag ${{ inputs.version }}
-          git push origin ${{ inputs.version }}
+          git tag "${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.tag.outputs.tag }}"
