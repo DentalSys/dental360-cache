@@ -1,4 +1,4 @@
-module github.com/Dentalsys/dental360-cache
+module github.com/DentalSys/dental360-cache
 
 go 1.25.6
 
