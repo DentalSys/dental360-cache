@@ -1,4 +1,4 @@
-name: CI Database
+name: CI Cache
 
 on: [pull_request]
 
@@ -14,17 +14,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25.x"
-
-      - name: Configure private modules
-        env:
-          GH_TOKEN: ${{ secrets.DENTALSYS_GH_TOKEN }}
-        run: |
-          go env -w GOPRIVATE=github.com/DentalSys/*
-          go env -w GONOSUMDB=github.com/DentalSys/*
-          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          cache: true
 
       - name: Download deps
-        run: go mod download
+        run: |
+          go mod download
+          go mod verify
 
       - name: Test
         run: go test ./...
